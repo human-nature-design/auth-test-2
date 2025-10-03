@@ -78,7 +78,7 @@ export default function TodoList({ session }: { session: Session }) {
         </button>
       </form>
       {!!errorText && <Alert text={errorText} />}
-      <div className="bg-white shadow overflow-hidden rounded-md">
+      <div className="bg-gray-50 dark:bg-gray-900 shadow overflow-hidden rounded-md">
         <ul>
           {todos.map((todo) => (
             <Todo key={todo.id} todo={todo} onDelete={() => deleteTodo(todo.id)} />
