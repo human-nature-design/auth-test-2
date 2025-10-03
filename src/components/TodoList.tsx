@@ -1,16 +1,16 @@
-import { Database } from '@/lib/schema'
-import { Session, useSupabaseClient } from '@supabase/auth-helpers-react'
+'use client'
+
+import { Database } from '@/utils/database.types'
+import { createClient } from '@/utils/supabase/client'
 import { useEffect, useState } from 'react'
 
 type Todos = Database['public']['Tables']['todos']['Row']
 
-export default function TodoList({ session }: { session: Session }) {
-  const supabase = useSupabaseClient<Database>()
+export default function TodoList({ userId }: { userId: string }) {
+  const supabase = createClient()
   const [todos, setTodos] = useState<Todos[]>([])
   const [newTaskText, setNewTaskText] = useState('')
   const [errorText, setErrorText] = useState('')
-
-  const user = session.user
 
   useEffect(() => {
     const fetchTodos = async () => {
@@ -31,7 +31,7 @@ export default function TodoList({ session }: { session: Session }) {
     if (task.length) {
       const { data: todo, error } = await supabase
         .from('todos')
-        .insert({ task, user_id: user.id })
+        .insert({ task, user_id: userId })
         .select()
         .single()
 
@@ -55,7 +55,7 @@ export default function TodoList({ session }: { session: Session }) {
 
   return (
     <div className="w-full">
-      <h1 className="mb-12">Todo List.</h1>
+      <h1 className="mb-12 text-4xl font-bold text-gray-900 dark:text-white">Todo List.</h1>
       <form
         onSubmit={(e) => {
           e.preventDefault()
@@ -64,7 +64,7 @@ export default function TodoList({ session }: { session: Session }) {
         className="flex gap-2 my-2"
       >
         <input
-          className="rounded w-full p-2"
+          className="rounded w-full p-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
           type="text"
           placeholder="make coffee"
           value={newTaskText}
@@ -73,12 +73,12 @@ export default function TodoList({ session }: { session: Session }) {
             setNewTaskText(e.target.value)
           }}
         />
-        <button className="btn-black" type="submit">
+        <button className="btn-black px-4 py-2 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 hover:bg-gray-800 dark:hover:bg-gray-200 rounded transition-colors" type="submit">
           Add
         </button>
       </form>
       {!!errorText && <Alert text={errorText} />}
-      <div className="bg-gray-50 dark:bg-gray-900 shadow overflow-hidden rounded-md">
+      <div className="bg-white dark:bg-gray-800 shadow overflow-hidden rounded-md border border-gray-200 dark:border-gray-700">
         <ul>
           {todos.map((todo) => (
             <Todo key={todo.id} todo={todo} onDelete={() => deleteTodo(todo.id)} />
@@ -90,7 +90,7 @@ export default function TodoList({ session }: { session: Session }) {
 }
 
 const Todo = ({ todo, onDelete }: { todo: Todos; onDelete: () => void }) => {
-  const supabase = useSupabaseClient<Database>()
+  const supabase = createClient()
   const [isCompleted, setIsCompleted] = useState(todo.is_complete)
 
   const toggle = async () => {
@@ -110,10 +110,10 @@ const Todo = ({ todo, onDelete }: { todo: Todos; onDelete: () => void }) => {
   }
 
   return (
-    <li className="w-full block cursor-pointer hover:bg-200 focus:outline-none focus:bg-200 transition duration-150 ease-in-out">
+    <li className="w-full block cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-50 dark:focus:bg-gray-700 transition duration-150 ease-in-out border-b border-gray-200 dark:border-gray-700 last:border-b-0">
       <div className="flex items-center px-4 py-4 sm:px-6">
         <div className="min-w-0 flex-1 flex items-center">
-          <div className="text-sm leading-5 font-medium truncate">{todo.task}</div>
+          <div className="text-sm leading-5 font-medium truncate text-gray-900 dark:text-white">{todo.task}</div>
         </div>
         <div>
           <input
@@ -129,7 +129,7 @@ const Todo = ({ todo, onDelete }: { todo: Todos; onDelete: () => void }) => {
             e.stopPropagation()
             onDelete()
           }}
-          className="w-4 h-4 ml-2 border-2 hover:border-black rounded"
+          className="w-4 h-4 ml-2 border-2 hover:border-black dark:hover:border-white rounded"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray">
             <path
@@ -145,7 +145,7 @@ const Todo = ({ todo, onDelete }: { todo: Todos; onDelete: () => void }) => {
 }
 
 const Alert = ({ text }: { text: string }) => (
-  <div className="rounded-md bg-red-100 p-4 my-3">
-    <div className="text-sm leading-5 text-red-700">{text}</div>
+  <div className="rounded-md bg-red-100 dark:bg-red-900/30 p-4 my-3">
+    <div className="text-sm leading-5 text-red-700 dark:text-red-400">{text}</div>
   </div>
 )
