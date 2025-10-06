@@ -17,6 +17,7 @@ export default function TodoList({ userId }: { userId: string }) {
       const { data: todos, error } = await supabase
         .from('todos')
         .select('*')
+        .eq('user_id', userId)
         .order('id', { ascending: true })
 
       if (error) console.log('error', error)
@@ -24,32 +25,49 @@ export default function TodoList({ userId }: { userId: string }) {
     }
 
     fetchTodos()
-  }, [supabase])
+  }, [supabase, userId])
 
   const addTodo = async (taskText: string) => {
     let task = taskText.trim()
-    if (task.length) {
-      const { data: todo, error } = await supabase
-        .from('todos')
-        .insert({ task, user_id: userId })
-        .select()
-        .single()
+    if (task.length <= 3) {
+      setErrorText('Task must be more than 3 characters')
+      return
+    }
 
-      if (error) {
-        setErrorText(error.message)
-      } else {
-        setTodos([...todos, todo])
-        setNewTaskText('')
-      }
+    const { data: todo, error } = await supabase
+      .from('todos')
+      .insert({ task, user_id: userId })
+      .select()
+      .single()
+
+    if (error) {
+      setErrorText(error.message)
+    } else {
+      setTodos([...todos, todo])
+      setNewTaskText('')
     }
   }
 
   const deleteTodo = async (id: number) => {
     try {
-      await supabase.from('todos').delete().eq('id', id).throwOnError()
+      const { data, error } = await supabase
+        .from('todos')
+        .delete()
+        .eq('id', id)
+        .eq('user_id', userId)
+        .select()
+
+      if (error) throw error
+
+      if (!data || data.length === 0) {
+        setErrorText('Todo not found or access denied')
+        return
+      }
+
       setTodos(todos.filter((x) => x.id != id))
     } catch (error) {
       console.log('error', error)
+      setErrorText('Failed to delete todo')
     }
   }
 
@@ -78,69 +96,103 @@ export default function TodoList({ userId }: { userId: string }) {
         </button>
       </form>
       {!!errorText && <Alert text={errorText} />}
-      <div className="bg-white dark:bg-gray-800 shadow overflow-hidden rounded-md border border-gray-200 dark:border-gray-700">
-        <ul>
-          {todos.map((todo) => (
-            <Todo key={todo.id} todo={todo} onDelete={() => deleteTodo(todo.id)} />
-          ))}
-        </ul>
-      </div>
+      <ul role="list" className="divide-y divide-gray-100 dark:divide-white/5">
+        {todos.map((todo) => (
+          <Todo key={todo.id} todo={todo} userId={userId} onDelete={() => deleteTodo(todo.id)} />
+        ))}
+      </ul>
     </div>
   )
 }
 
-const Todo = ({ todo, onDelete }: { todo: Todos; onDelete: () => void }) => {
+const Todo = ({ todo, userId, onDelete }: { todo: Todos; userId: string; onDelete: () => void }) => {
   const supabase = createClient()
   const [isCompleted, setIsCompleted] = useState(todo.is_complete)
+  const [errorText, setErrorText] = useState('')
 
   const toggle = async () => {
     try {
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('todos')
         .update({ is_complete: !isCompleted })
         .eq('id', todo.id)
-        .throwOnError()
+        .eq('user_id', userId)
         .select()
         .single()
 
-      if (data) setIsCompleted(data.is_complete)
+      if (error) throw error
+
+      if (!data) {
+        setErrorText('Failed to update todo or access denied')
+        return
+      }
+
+      setIsCompleted(data.is_complete)
     } catch (error) {
       console.log('error', error)
+      setErrorText('Failed to update todo')
     }
   }
 
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    const now = new Date()
+    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60))
+
+    if (diffInHours < 1) return 'just now'
+    if (diffInHours < 24) return `${diffInHours}h ago`
+    const diffInDays = Math.floor(diffInHours / 24)
+    if (diffInDays === 1) return 'yesterday'
+    if (diffInDays < 7) return `${diffInDays}d ago`
+    return date.toLocaleDateString()
+  }
+
   return (
-    <li className="w-full block cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-50 dark:focus:bg-gray-700 transition duration-150 ease-in-out border-b border-gray-200 dark:border-gray-700 last:border-b-0">
-      <div className="flex items-center px-4 py-4 sm:px-6">
-        <div className="min-w-0 flex-1 flex items-center">
-          <div className="text-sm leading-5 font-medium truncate text-gray-900 dark:text-white">{todo.task}</div>
-        </div>
-        <div>
-          <input
-            className="cursor-pointer"
-            onChange={(e) => toggle()}
-            type="checkbox"
-            checked={isCompleted ? true : false}
-          />
-        </div>
-        <button
-          onClick={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-            onDelete()
-          }}
-          className="w-4 h-4 ml-2 border-2 hover:border-black dark:hover:border-white rounded"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="gray">
-            <path
-              fillRule="evenodd"
-              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-              clipRule="evenodd"
+    <>
+      {!!errorText && <Alert text={errorText} />}
+      <li className="flex justify-between gap-x-6 py-5">
+        <div className="flex min-w-0 gap-x-4">
+          <div className="flex items-center">
+            <input
+              className="cursor-pointer size-4 rounded border-gray-300 dark:border-gray-600"
+              onChange={() => toggle()}
+              type="checkbox"
+              checked={isCompleted ? true : false}
             />
-          </svg>
-        </button>
-      </div>
-    </li>
+          </div>
+          <div className="min-w-0 flex-auto">
+            <p className={`text-sm/6 font-semibold ${isCompleted ? 'line-through text-gray-500 dark:text-gray-500' : 'text-gray-900 dark:text-white'}`}>
+              {todo.task}
+            </p>
+            <p className="mt-1 truncate text-xs/5 text-gray-500 dark:text-gray-400">
+              Created {formatDate(todo.inserted_at)}
+            </p>
+          </div>
+        </div>
+        <div className="hidden shrink-0 sm:flex sm:flex-col sm:items-end">
+          {isCompleted ? (
+            <div className="mt-1 flex items-center gap-x-1.5">
+              <div className="flex-none rounded-full bg-emerald-500/20 p-1 dark:bg-emerald-500/30">
+                <div className="size-1.5 rounded-full bg-emerald-500" />
+              </div>
+              <p className="text-xs/5 text-gray-500 dark:text-gray-400">Completed</p>
+            </div>
+          ) : (
+            <p className="text-xs/5 text-gray-500 dark:text-gray-400">In progress</p>
+          )}
+          <button
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              onDelete()
+            }}
+            className="mt-1 text-xs/5 text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
+          >
+            Delete
+          </button>
+        </div>
+      </li>
+    </>
   )
 }
 
