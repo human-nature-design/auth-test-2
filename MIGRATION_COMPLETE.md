@@ -124,10 +124,10 @@ npm start
 File: `.env`
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=https://xihshdjtvaoutozrgbcr.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=sb_publishable_k9-zvoSDk08LXzPMWTo09w_05Ldb9X0
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_k9-zvoSDk08LXzPMWTo09w_05Ldb9X0
 ```
 
-**Note:** Variable name changed from `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` to `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+**Note:** Uses `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (also called "anon key" in Supabase dashboard)
 
 ---
 
