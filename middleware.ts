@@ -1,3 +1,5 @@
+// this is the next js middleware file used to protect the routes
+
 import { type NextRequest } from 'next/server'
 import { updateSession } from '@/utils/supabase/middleware'
 

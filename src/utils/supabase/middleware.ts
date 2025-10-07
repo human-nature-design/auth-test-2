@@ -1,3 +1,5 @@
+// this is the supabase middleware file used to protect the routes, it is exported to the next js middleware file at the root of the project.
+
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
