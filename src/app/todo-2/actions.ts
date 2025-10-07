@@ -49,14 +49,28 @@ export async function completeTodo(id: number, done: boolean) : Promise<Todo> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Unauthorized");
 
+  console.log("Attempting to update todo:", { id, done, userId: user.id });
+
+  // First check if the todo exists and belongs to user
+  const { data: existing } = await supabase
+    .from("todos")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  console.log("Existing todo:", existing);
+
   const { data, error } = await supabase
     .from("todos")
     .update({ is_complete: done })
     .eq("id", id)
     .eq("user_id", user.id)
     .select("id, task, is_complete, inserted_at")
-    .single();
+    .maybeSingle();
+
+  console.log("Update result:", { data, error });
 
   if (error) throw new Error(error.message);
+  if (!data) throw new Error("Todo not found or access denied");
   return data;
 }
