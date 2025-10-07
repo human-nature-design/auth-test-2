@@ -33,13 +33,28 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (
-    !user &&
-    !request.nextUrl.pathname.startsWith('/') &&
-    request.nextUrl.pathname !== '/'
-  ) {
+  // Determine which route is being requested so we can decide whether auth is required.
+  const pathname = request.nextUrl.pathname
+  const publicRoutes = ['/', '/login', '/signup']
+  const isPublicRoute = publicRoutes.some((route) =>
+    pathname === route || pathname.startsWith(`${route}/`)
+  )
+
+  // Temporary instrumentation to verify middleware decisions while testing.
+  console.log('[middleware] auth check', {
+    pathname,
+    isPublicRoute,
+    hasUser: Boolean(user),
+  })
+
+  // Redirect unauthenticated traffic away from protected routes.
+  if (!user && !isPublicRoute) {
     const url = request.nextUrl.clone()
     url.pathname = '/'
+    console.log('[middleware] redirecting unauthenticated request', {
+      from: pathname,
+      to: url.pathname,
+    })
     return NextResponse.redirect(url)
   }
 

@@ -41,8 +41,6 @@ export async function addTodo(task: string) : Promise<Todo> {
 
   if (error) throw new Error(error.message);
 
-  // log the task being added to the console
-  console.log("task", task);
   return data;
 }
 
