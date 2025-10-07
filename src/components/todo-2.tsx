@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { addTodo, deleteTodo, completeTodo, Todo } from "@/app/todo-2/actions";
+import { addTodo, deleteTodo, completeTodo, Todo } from "@/app/(protected)/todo-2/actions";
 
 
 export default function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
