@@ -1,7 +1,7 @@
 "use client";
 
   import { useState, useTransition } from "react";
-  import { addTodo, deleteTodo, toggleTodo } from
+  import { addTodo, deleteTodo, completeTodo } from
   "@/app/todo-2/actions";
 
   type Todo = {
@@ -33,19 +33,39 @@
       }
       
 
-    function onDelete(id: number) {
-      startTransition(async () => {
-        await deleteTodo(id);
-        setTodos((t) => t.filter((x) => x.id !== id));
-      });
-    }
+      async function onDelete(id: number) {
+        
+        // optimistic UI
+        const prev = todos;
+        setTodos(t => t.filter(x => x.id !== id));
+      
+        try {
+          await deleteTodo(id);            
+          console.log("id", id);
+          // server action: "use server"
+        } catch (err) {
+          console.error("Delete failed:", err); // shows in terminal if thrown on server
+          setTodos(prev);                  
+          // rollback UI
+          alert("Couldn’t delete this item. Try again.");
+        }
+      }
 
-    function onToggle(id: number, next: boolean) {
-      startTransition(async () => {
-        const updated = await toggleTodo(id, next);
-        setTodos((t) => t.map((x) => (x.id === id ? updated :
-   x)));
-      });
+    async function onComplete(id: number, next: boolean) {
+    // optimistic UI
+    const prev = todos;
+    setTodos(t => t.map(todo => 
+      todo.id === id ? { ...todo, is_complete: next } : todo
+    ));
+
+    try {
+      await completeTodo(id, next);
+      console.log("Todo completed:", id, next);
+    } catch (err) {
+      console.error("Complete failed:", err);
+      setTodos(prev);
+      alert("Couldn't update this item. Try again.");
+    }
     }
 
     return (
@@ -87,7 +107,7 @@
               <input
                 type="checkbox"
                 checked={todo.is_complete}
-                onChange={(e) => onToggle(todo.id,
+                onChange={(e) => onComplete(todo.id,
   e.target.checked)}
                 disabled={isPending}
               />
