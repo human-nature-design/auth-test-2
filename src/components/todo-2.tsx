@@ -13,21 +13,19 @@ type Todo = {
 export default function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
   const [todos, setTodos] = useState(initialTodos);
   const [newTask, setNewTask] = useState("");
-  const [isPending, startTransition] = useTransition();
 
-  function onAdd(task: string) {
-    const run = async () => {
+
+  async function onAdd(task: string) {
+    if (task.trim().length <= 3) return;
+
+    try {
       const created = await addTodo(task);
       setTodos((t) => [created, ...t]);
       setNewTask("");
-    };
-
-    // log the task being added to the console
-    console.log("task", task);
-    // startTransition expects a sync callback
-    startTransition(() => {
-      run(); // call async function, but don't return the promise
-    });
+    } catch (err) {
+      console.error("Add failed:", err);
+      alert("Couldn't add todo. Try again.");
+    }
   }
 
   async function onDelete(id: number) {
@@ -84,11 +82,11 @@ export default function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
           onChange={(e) => setNewTask(e.target.value)}
           placeholder="Enter a task (min 4 chars)..."
           className="border rounded px-3 py-2 w-full"
-          disabled={isPending}
+
         />
         <button
           type="submit"
-          disabled={isPending || newTask.trim().length <= 3}
+          disabled={ newTask.trim().length <= 3}
           className="mt-2 bg-blue-500 text-white px-4 py-2 rounded disabled:opacity-50"
         >
           Add Todo
@@ -106,14 +104,13 @@ export default function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
               type="checkbox"
               checked={todo.is_complete}
               onChange={(e) => onComplete(todo.id, e.target.checked)}
-              disabled={isPending}
+
             />
             <span className={todo.is_complete ? "line-through" : ""}>
               {todo.task}
             </span>
             <button
               onClick={() => onDelete(todo.id)}
-              disabled={isPending}
               className="ml-auto text-red-500 hover:text-red-700"
             >
               Delete

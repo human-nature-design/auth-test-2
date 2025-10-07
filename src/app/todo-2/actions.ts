@@ -46,7 +46,7 @@ export async function completeTodo(id: number, done: boolean) {
 
   const { data, error } = await supabase
     .from("todos")
-    .update({ is_complete: true })
+    .update({ is_complete: done })
     .eq("id", id)
     .eq("user_id", user.id)
     .select("id, task, is_complete, inserted_at")
