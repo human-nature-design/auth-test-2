@@ -62,7 +62,7 @@ export default function TodoList({ initialTodos = [] }: { initialTodos?: Todo[] 
 
   return (
     <div className="max-w-2xl mx-auto p-4 w-full">
-      <h1 className="text-2xl font-bold mb-4">My Todos</h1>
+      <h1 className="text-2xl font-bold mb-4s text-white">My Todos</h1>
 
       {/* Add todo form */}
       <form
