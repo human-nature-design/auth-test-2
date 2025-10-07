@@ -89,32 +89,30 @@ export default function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
       </form>
 
       {/* Todo list */}
-      <div className="space-y-2">
+      <ul className="space-y-2">
         {todos.map((todo) => (
-          <CheckboxCard
+          <li
             key={todo.id}
-            className="w-max"
-            checked={todo.is_complete}
-            onCheckedChange={(checked: boolean) => onComplete(todo.id, checked)}
+            className="flex items-center gap-2 border p-2 rounded"
           >
-            <span className={`text-body-bold font-body-bold text-default-font ${todo.is_complete ? "line-through" : ""}`}>
+            <input
+              type="checkbox"
+              checked={todo.is_complete}
+              onChange={(e) => onComplete(todo.id, e.target.checked)}
+
+            />
+            <span className={todo.is_complete ? "line-through" : ""}>
               {todo.task}
             </span>
-            <div className="flex grow shrink-0 basis-0 flex-col items-end gap-2 px-2 py-2">
-              <span className="text-monospace-body font-monospace-body text-default-font text-right">
-                {todo.id}
-              </span>
-            </div>
-            <IconButton
-              className="hover:shadow-md hover:shadow-md:hover transition-shadow"
-              variant="neutral-secondary"
-              size="small"
-              icon={<FeatherX />}
-              onClick={(event: React.MouseEvent<HTMLButtonElement>) => onDelete(todo.id)}
-            />
-          </CheckboxCard>
+            <button
+              onClick={() => onDelete(todo.id)}
+              className="ml-auto text-red-500 hover:text-red-700"
+            >
+              Delete
+            </button>
+          </li>
         ))}
-      </div>
+      </ul>
     </div>
   );
 }
