@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { addTodo, deleteTodo, completeTodo, Todo } from "./actions";
-import { CheckboxCard } from "@/ui/components/CheckboxCard";
+import { Checkbox } from "@/ui/components/Checkbox";
 import { IconButton } from "@/ui/components/IconButton";
 import { FeatherX } from "@subframe/core";
 
@@ -90,34 +90,30 @@ export default function TodoList({ initialTodos = [] }: { initialTodos?: Todo[] 
       </form>
 
       {/* Todo list */}
-      <div className="container max-w-none flex h-full w-full flex-col items-start gap-4 bg-default-background py-12">
-        {todos.map((todo) => (
-          <div key={todo.id} className="flex items-center gap-2 w-full">
-            <CheckboxCard
-              className="flex-1"
-              checked={todo.is_complete}
-              onCheckedChange={(checked: boolean) => onComplete(todo.id, checked)}
-            >
-              <span className="text-body font-body text-default-font">
-                {todo.task}
-              </span>
-              <div className="flex grow shrink-0 basis-0 flex-col items-end gap-2 px-2 py-2">
-                <span className="text-monospace-body font-monospace-body text-default-font text-right">
-                  {todo.id}
-                </span>
-              </div>
-              <IconButton
-              className="hover:shadow-md transition-shadow"
-              variant="destructive-tertiary"
-              size="small"
-              icon={<FeatherX />}
-              onClick={() => onDelete(todo.id)}
-            />
-            </CheckboxCard>
-            
-          </div>
-        ))}
-      </div>
+      {todos.map((todo) => (
+      <div key={todo.id} className="flex items-center gap-2 border border-solid border-neutral-border px-2 py-2">
+          <Checkbox
+            label={todo.task}
+            checked={todo.is_complete}
+            onCheckedChange={(checked: boolean) => {
+              onComplete(todo.id, checked);
+            }}
+          />
+          <span className="text-monospace-body font-monospace-body text-default-font">
+            {todo.id}
+          </span>
+          <IconButton
+            className="hover:shadow-md hover:shadow-md:hover transition-shadow"
+            variant="destructive-secondary"
+            size="small"
+            icon={<FeatherX />}
+            onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+              event.preventDefault();
+              onDelete(todo.id);
+            }}
+          />
+        </div>
+      ))}
     </div>
   );
 }
