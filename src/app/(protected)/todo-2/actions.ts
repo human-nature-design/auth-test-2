@@ -37,7 +37,7 @@ export async function deleteTodo(id: number) : Promise<Todo> {
     .delete()
     .eq("id", id)
     .eq("user_id", user.id)
-    .select("id")
+    .select("id, task, is_complete, inserted_at")
     .single();
 
   if (error) throw new Error(error.message);
