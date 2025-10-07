@@ -98,7 +98,7 @@ export default function TodoList({ initialTodos = [] }: { initialTodos?: Todo[] 
               checked={todo.is_complete}
               onCheckedChange={(checked: boolean) => onComplete(todo.id, checked)}
             >
-              <span className="text-monospace-body font-monospace-body text-default-font">
+              <span className="text-body font-body text-default-font">
                 {todo.task}
               </span>
               <div className="flex grow shrink-0 basis-0 flex-col items-end gap-2 px-2 py-2">
@@ -108,7 +108,7 @@ export default function TodoList({ initialTodos = [] }: { initialTodos?: Todo[] 
               </div>
               <IconButton
               className="hover:shadow-md transition-shadow"
-              variant="neutral-secondary"
+              variant="destructive-tertiary"
               size="small"
               icon={<FeatherX />}
               onClick={() => onDelete(todo.id)}
