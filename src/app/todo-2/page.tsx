@@ -1,6 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Todo2 from "@/components/todo-2";
+import LogoutButton from "@/components/logout-button";
 
 export default async function TodosPage() {
   const supabase = await createClient();
@@ -15,5 +16,11 @@ export default async function TodosPage() {
 
   if (error) throw new Error(error.message);
 
-  return <Todo2 initialTodos={todos ?? []} />;
+  return (
+    <div className="w-full h-full flex flex-col justify-center items-center p-4">
+      <Todo2 initialTodos={todos ?? []} />
+      <div><LogoutButton/></div>
+    </div>
+  );
+    
 }
