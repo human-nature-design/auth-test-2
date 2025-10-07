@@ -40,21 +40,11 @@ export async function updateSession(request: NextRequest) {
     pathname === route || pathname.startsWith(`${route}/`)
   )
 
-  // Temporary instrumentation to verify middleware decisions while testing.
-  console.log('[middleware] auth check', {
-    pathname,
-    isPublicRoute,
-    hasUser: Boolean(user),
-  })
 
   // Redirect unauthenticated traffic away from protected routes.
   if (!user && !isPublicRoute) {
     const url = request.nextUrl.clone()
     url.pathname = '/'
-    console.log('[middleware] redirecting unauthenticated request', {
-      from: pathname,
-      to: url.pathname,
-    })
     return NextResponse.redirect(url)
   }
 
