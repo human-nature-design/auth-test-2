@@ -14,6 +14,9 @@ export async function addTodo(task: string) {
     .single();
 
   if (error) throw new Error(error.message);
+  
+  // log the task being added to the console
+  console.log("task", task);
   return data;
 }
 

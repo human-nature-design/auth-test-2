@@ -18,12 +18,20 @@
     const [isPending, startTransition] = useTransition();
 
     function onAdd(task: string) {
-      startTransition(async () => {
-        const created = await addTodo(task);
-        setTodos((t) => [created, ...t]);
-        setNewTask("");
-      });
-    }
+        const run = async () => {
+          const created = await addTodo(task);
+          setTodos((t) => [created, ...t]);
+          setNewTask("");
+        };
+
+        // log the task being added to the console
+        console.log("task", task);
+        // startTransition expects a sync callback
+        startTransition(() => {
+          run(); // call async function, but don't return the promise
+        });
+      }
+      
 
     function onDelete(id: number) {
       startTransition(async () => {
