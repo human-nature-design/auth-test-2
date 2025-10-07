@@ -2,7 +2,14 @@
 
 import { createClient } from "@/utils/supabase/server";
 
-export async function addTodo(task: string) {
+export type Todo = {
+    id: number;
+    task: string;
+    is_complete: boolean;
+    inserted_at: string;
+  };
+
+export async function addTodo(task: string) : Promise<Todo> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Unauthorized");
@@ -20,7 +27,7 @@ export async function addTodo(task: string) {
   return data;
 }
 
-export async function deleteTodo(id: number) {
+export async function deleteTodo(id: number) : Promise<Todo> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Unauthorized");
@@ -34,12 +41,10 @@ export async function deleteTodo(id: number) {
     .single();
 
   if (error) throw new Error(error.message);
-
-  console.log("task", data);
   return data;
 }
 
-export async function completeTodo(id: number, done: boolean) {
+export async function completeTodo(id: number, done: boolean) : Promise<Todo> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Unauthorized");

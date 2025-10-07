@@ -1,14 +1,8 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { addTodo, deleteTodo, completeTodo } from "@/app/todo-2/actions";
+import { useState } from "react";
+import { addTodo, deleteTodo, completeTodo, Todo } from "@/app/todo-2/actions";
 
-type Todo = {
-  id: number;
-  task: string;
-  is_complete: boolean;
-  inserted_at: string;
-};
 
 export default function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
   const [todos, setTodos] = useState(initialTodos);
@@ -16,7 +10,8 @@ export default function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
 
 
   async function onAdd(task: string) {
-    if (task.trim().length <= 3) return;
+    if (task.trim().length <= 3) 
+        return;
 
     try {
       const created = await addTodo(task);
@@ -35,8 +30,6 @@ export default function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
 
     try {
       await deleteTodo(id);
-      console.log("id", id);
-      // server action: "use server"
     } catch (err) {
       console.error("Delete failed:", err); // shows in terminal if thrown on server
       setTodos(prev);
@@ -56,7 +49,6 @@ export default function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
 
     try {
       await completeTodo(id, next);
-      console.log("Todo completed:", id, next);
     } catch (err) {
       console.error("Complete failed:", err);
       setTodos(prev);
