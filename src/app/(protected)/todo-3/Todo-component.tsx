@@ -20,7 +20,6 @@ export default function TodoList({ initialTodos = [] }: { initialTodos?: Todo[] 
       const created = await addTodo(task);
       setTodos((t) => [created, ...t]);
       setNewTask("");
-      console.log("Todo added:", created);
     } catch (err) {
       console.error("Add failed:", err);
       alert("Couldn't add todo. Try again.");
@@ -62,7 +61,7 @@ export default function TodoList({ initialTodos = [] }: { initialTodos?: Todo[] 
 
   return (
     <div className="max-w-2xl mx-auto p-4 w-full">
-      <h1 className="text-2xl font-bold mb-4s text-white">My Todos</h1>
+      <h1 className="text-2xl font-bold mb-4 text-white">My Todos</h1>
 
       {/* Add todo form */}
       <form
@@ -76,7 +75,7 @@ export default function TodoList({ initialTodos = [] }: { initialTodos?: Todo[] 
           type="text"
           value={newTask}
           onChange={(e) => setNewTask(e.target.value)}
-          placeholder="Enter a task (min 4 chars)..."
+          placeholder="Enter a task (min  chars)..."
           className="border rounded px-3 py-2 w-full"
 
         />
@@ -103,7 +102,7 @@ export default function TodoList({ initialTodos = [] }: { initialTodos?: Todo[] 
             {todo.id}
           </span>
           <IconButton
-            className="hover:shadow-md hover:shadow-md:hover transition-shadow"
+            className="hover:shadow-md:hover transition-shadow"
             variant="destructive-secondary"
             size="small"
             icon={<FeatherX />}

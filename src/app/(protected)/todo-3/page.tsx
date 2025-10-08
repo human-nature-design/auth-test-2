@@ -1,5 +1,5 @@
 import { getTodos } from "./actions";
-import TodoListClient from "./Todo-component";
+import TodoListClient from "./todo-component";
 
 export default async function TodoPage() {
   const todos = await getTodos();
