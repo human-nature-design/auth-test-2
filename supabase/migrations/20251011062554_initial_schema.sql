@@ -4,7 +4,7 @@ create table public.todos (
   user_id uuid not null references auth.users,
   task text,
   is_complete boolean,
-  inserted_at timestamp with time zone default timezone('utc'::text, now()) not null
+  inserted_at timestamp with time zone default (now() AT TIME ZONE 'utc'::text) not null
 );
 
 -- Enable RLS
