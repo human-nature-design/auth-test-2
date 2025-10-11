@@ -1,4 +1,8 @@
+
 # Architecture and Implementation Notes for `/todo-3`
+
+Overview video
+https://share.descript.com/view/Q74NaAJbiAI
 
 This document walks through the architecture, auth flow, and deployment setup for the `/todo-3` experience. It follows the same structure I used in the video walkthrough: start with the stack, dive into authentication and multi-tenancy, then trace how the UI, actions, and database policies fit together. Rather than summarising, I want to leave all of the key beats intact so you can cross-reference them with the repo and replicate the setup end to end.
 

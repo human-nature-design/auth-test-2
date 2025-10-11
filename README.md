@@ -108,11 +108,5 @@ create policy "Individuals can delete their own todos." on todos for
     delete using ((select auth.uid()) = user_id);
 ```
 
-## Authors
-
-- [Supabase](https://supabase.com)
-
-Supabase is open source. We'd love for you to follow along and get involved at https://github.com/supabase/supabase
 
 
-push some changes
