@@ -1,13 +1,7 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
-
-export type Todo = {
-    id: number;
-    task: string;
-    is_complete: boolean;
-    inserted_at: string;
-  };
+import type { Todo } from "@/types";
 
 export async function getTodos(): Promise<Todo[]> {
   const supabase = await createClient();

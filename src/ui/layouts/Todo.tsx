@@ -7,13 +7,7 @@ import { IconButton } from "@/ui/components/IconButton";
 import { TextField } from "@/ui/components/TextField";
 import { FeatherX, FeatherPlusCircle } from "@subframe/core";
 import UserProfileSettings from "@/ui/components/user-profile-settings";
-
-export type Todo = {
-  id: number;
-  task: string;
-  is_complete: boolean;
-  inserted_at: string;
-};
+import type { Todo } from "@/types";
 
 type MyTodosProps = {
   initialTodos?: Todo[];
@@ -125,7 +119,7 @@ export default function MyTodos({
               {todo.id}
             </span>
             <IconButton
-              className="hover:shadow-md hover:shadow-md:hover transition-shadow"
+              className="ml-auto hover:shadow-md hover:shadow-md:hover transition-shadow"
               variant="destructive-secondary"
               size="small"
               icon={<FeatherX />}
