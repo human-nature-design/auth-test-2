@@ -7,7 +7,7 @@ import { DropdownMenu } from "@/ui/components/DropdownMenu";
 import { FeatherLogOut, FeatherUser } from "@subframe/core";
 import * as SubframeCore from "@subframe/core";
 
-export default function LogoutButton() {
+export default function UserProfileSettings() {
   const router = useRouter()
   const supabase = createClient()
 

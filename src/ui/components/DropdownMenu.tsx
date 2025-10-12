@@ -1,17 +1,18 @@
 "use client";
 /*
  * Documentation:
- * Dropdown Menu — https://app.subframe.com/library?component=Dropdown+Menu_99951515-459b-4286-919e-a89e7549b43b
+ * Dropdown Menu — https://app.subframe.com/eba0e2f569a0/library?component=Dropdown+Menu_99951515-459b-4286-919e-a89e7549b43b
  */
 
 import React from "react";
+import { FeatherStar } from "@subframe/core";
 import * as SubframeCore from "@subframe/core";
 import * as SubframeUtils from "../utils";
 
 interface DropdownItemProps
   extends React.ComponentProps<typeof SubframeCore.DropdownMenu.Item> {
   children?: React.ReactNode;
-  icon?: SubframeCore.IconName;
+  icon?: React.ReactNode;
   className?: string;
 }
 
@@ -19,7 +20,7 @@ const DropdownItem = React.forwardRef<HTMLDivElement, DropdownItemProps>(
   function DropdownItem(
     {
       children,
-      icon = "FeatherStar",
+      icon = <FeatherStar />,
       className,
       ...otherProps
     }: DropdownItemProps,
@@ -34,10 +35,11 @@ const DropdownItem = React.forwardRef<HTMLDivElement, DropdownItemProps>(
           )}
           ref={ref}
         >
-          <SubframeCore.Icon
-            className="text-body font-body text-default-font"
-            name={icon}
-          />
+          {icon ? (
+            <SubframeCore.IconWrapper className="text-body font-body text-default-font">
+              {icon}
+            </SubframeCore.IconWrapper>
+          ) : null}
           {children ? (
             <span className="line-clamp-1 grow shrink-0 basis-0 text-body font-body text-default-font group-hover/adcae8d6:text-default-font">
               {children}
