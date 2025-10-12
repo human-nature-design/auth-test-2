@@ -1,11 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { addTodo, deleteTodo, completeTodo, Todo } from "@/app/(protected)/todo-2/actions";
+import { addTodo, deleteTodo, completeTodo, Todo } from "../../app/(protected)/todos/actions";
+import { Checkbox } from "@/ui/components/Checkbox";
+import { IconButton } from "@/ui/components/IconButton";
+import { FeatherX } from "@subframe/core";
 
 
-export default function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
-  const [todos, setTodos] = useState(initialTodos);
+export default function TodoList({ initialTodos = [] }: { initialTodos?: Todo[] }) {
+  const [todos, setTodos] = useState<Todo[]>(initialTodos);
   const [newTask, setNewTask] = useState("");
 
 
@@ -58,7 +61,7 @@ export default function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
 
   return (
     <div className="max-w-2xl mx-auto p-4 w-full">
-      <h1 className="text-2xl font-bold mb-4">My Todos</h1>
+      <h1 className="text-2xl font-bold mb-4 text-white">My Todos</h1>
 
       {/* Add todo form */}
       <form
@@ -72,7 +75,7 @@ export default function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
           type="text"
           value={newTask}
           onChange={(e) => setNewTask(e.target.value)}
-          placeholder="Enter a task (min 4 chars)..."
+          placeholder="Enter a task (min  chars)..."
           className="border rounded px-3 py-2 w-full"
 
         />
@@ -86,30 +89,30 @@ export default function TodoList({ initialTodos }: { initialTodos: Todo[] }) {
       </form>
 
       {/* Todo list */}
-      <ul className="space-y-2">
-        {todos.map((todo) => (
-          <li
-            key={todo.id}
-            className="flex items-center gap-2 border p-2 rounded"
-          >
-            <input
-              type="checkbox"
-              checked={todo.is_complete}
-              onChange={(e) => onComplete(todo.id, e.target.checked)}
-
-            />
-            <span className={todo.is_complete ? "line-through" : ""}>
-              {todo.task}
-            </span>
-            <button
-              onClick={() => onDelete(todo.id)}
-              className="ml-auto text-red-500 hover:text-red-700"
-            >
-              Delete
-            </button>
-          </li>
-        ))}
-      </ul>
+      {todos.map((todo) => (
+      <div key={todo.id} className="flex items-center gap-2 border border-solid border-neutral-border px-2 py-2">
+          <Checkbox
+            label={todo.task}
+            checked={todo.is_complete}
+            onCheckedChange={(checked: boolean) => {
+              onComplete(todo.id, checked);
+            }}
+          />
+          <span className="text-monospace-body font-monospace-body text-default-font">
+            {todo.id}
+          </span>
+          <IconButton
+            className="hover:shadow-md:hover transition-shadow"
+            variant="destructive-secondary"
+            size="small"
+            icon={<FeatherX />}
+            onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+              event.preventDefault();
+              onDelete(todo.id);
+            }}
+          />
+        </div>
+      ))}
     </div>
   );
 }

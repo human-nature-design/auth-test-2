@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
-import LoginForm from '@/components/login-form'
+import LoginForm from '@/ui/components/login-form'
 
 export default async function Home() {
   const supabase = await createClient()

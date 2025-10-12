@@ -1,6 +1,6 @@
-import LogoutButton from "@/components/logout-button";
+import LogoutButton from "@/ui/components/logout-button";
 import { getTodos } from "./actions";
-import TodoListClient from "./Todo-component";
+import TodoListClient from "../../../ui/layouts/Todo";
 
 export default async function TodoPage() {
   const todos = await getTodos();
