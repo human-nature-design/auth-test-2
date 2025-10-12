@@ -72,7 +72,7 @@ export default function MyTodos({
     <div className="container max-w-none flex h-full w-full flex-col items-start gap-4 bg-default-background py-12">
       <div className="flex w-full items-center justify-between">
         <span className="text-heading-2 font-heading-2 text-default-font">
-          My Tasks
+          My todos
         </span>
         <UserProfileSettings />
       </div>
