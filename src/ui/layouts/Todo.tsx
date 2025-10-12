@@ -1,19 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
+import type { Todo } from "@/types/todos";
 import { Button } from "@/ui/components/Button";
 import { Checkbox } from "@/ui/components/Checkbox";
 import { IconButton } from "@/ui/components/IconButton";
 import { TextField } from "@/ui/components/TextField";
 import { FeatherX, FeatherPlusCircle } from "@subframe/core";
 import UserProfileSettings from "@/ui/components/user-profile-settings";
-
-export type Todo = {
-  id: number;
-  task: string;
-  is_complete: boolean;
-  inserted_at: string;
-};
 
 type MyTodosProps = {
   initialTodos?: Todo[];
@@ -115,8 +109,8 @@ export default function MyTodos({
         {todos.map((todo) => (
           <div key={todo.id} className="flex w-full items-center gap-2 border border-solid border-neutral-border px-2 py-2">
             <Checkbox
-              label={todo.task}
-              checked={todo.is_complete}
+              label={todo.task ?? ""}
+              checked={Boolean(todo.is_complete)}
               onCheckedChange={(checked: boolean) => {
                 onComplete(todo.id, checked);
               }}
