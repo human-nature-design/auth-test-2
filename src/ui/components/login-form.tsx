@@ -29,7 +29,7 @@ export default function LoginForm() {
       setError(error.message)
       setLoading(false)
     } else {
-      router.push('/(protected)/todo-3')
+      router.push('/todos')
       router.refresh()
     }
   }

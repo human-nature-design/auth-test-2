@@ -1,10 +1,10 @@
 
-# Architecture and Implementation Notes for `/todo-3`
+# Architecture and Implementation Notes for `/todos`    
 
 Overview video
 https://share.descript.com/view/Q74NaAJbiAI
 
-This document walks through the architecture, auth flow, and deployment setup for the `/todo-3` experience. It follows the same structure I used in the video walkthrough: start with the stack, dive into authentication and multi-tenancy, then trace how the UI, actions, and database policies fit together. Rather than summarising, I want to leave all of the key beats intact so you can cross-reference them with the repo and replicate the setup end to end.
+This document walks through the architecture, auth flow, and deployment setup for the `/todos` experience. It follows the same structure I used in the video walkthrough: start with the stack, dive into authentication and multi-tenancy, then trace how the UI, actions, and database policies fit together. Rather than summarising, I want to leave all of the key beats intact so you can cross-reference them with the repo and replicate the setup end to end.
 
 ## 1. High-level tour of the stack
 
@@ -20,11 +20,11 @@ Second, the `(protected)` route group wraps every page under `/todo-*` in a layo
 
 ## 3. Logging in and issuing the session cookie
 
-The public landing page renders a login/sign-up form. When a returning user submits their credentials, `supabase.auth.signInWithPassword` runs in the browser and, on success, Next’s router pushes them to `/todo-3` and refreshes the client so server components pick up the new session cookie.【F:src/app/page.tsx†L1-L19】【F:src/components/login-form.tsx†L1-L129】 Supabase stores the JWT-backed session in an HTTP-only cookie. Because both the middleware and the server helpers read from `request.cookies`, subsequent requests—including the server component render for `/todo-3`—automatically receive the authenticated context.【F:src/utils/supabase/middleware.ts†L8-L33】【F:src/utils/supabase/server.ts†L7-L24】
+The public landing page renders a login/sign-up form. When a returning user submits their credentials, `supabase.auth.signInWithPassword` runs in the browser and, on success, Next’s router pushes them to `/todos` and refreshes the client so server components pick up the new session cookie.【F:src/app/page.tsx†L1-L19】【F:src/components/login-form.tsx†L1-L129】 Supabase stores the JWT-backed session in an HTTP-only cookie. Because both the middleware and the server helpers read from `request.cookies`, subsequent requests—including the server component render for `/todos`—automatically receive the authenticated context.【F:src/utils/supabase/middleware.ts†L8-L33】【F:src/utils/supabase/server.ts†L7-L24】
 
 ## 4. Server actions mirror CRUD permissions
 
-All of the data access for `/todo-3` lives in `actions.ts`. Each exported function starts by rehydrating the Supabase server client and verifying the user identity. That identity check is important; the Supabase helpers run on the server, so you can throw an “Unauthorized” error before hitting the database if there is no session.【F:src/app/(protected)/todo-3/actions.ts†L12-L76】 Once the user is confirmed, the actions map 1:1 to Postgres operations:
+All of the data access for `/todos` lives in `actions.ts`. Each exported function starts by rehydrating the Supabase server client and verifying the user identity. That identity check is important; the Supabase helpers run on the server, so you can throw an “Unauthorized” error before hitting the database if there is no session.【F:src/app/(protected)/todos/actions.ts†L12-L76】 Once the user is confirmed, the actions map 1:1 to Postgres operations:
 
 - `getTodos` selects the todo records for the authenticated user, ordering by descending id so new entries appear first.
 - `addTodo` inserts a new row tied to the current `user_id` and returns the created record.
@@ -35,13 +35,13 @@ This mirrors the CRUD policy configuration in Supabase’s Quickstart. The proje
 
 ## 5. Page orchestration and data loading
 
-The `/todo-3` page itself is a server component. It awaits `getTodos()`, passes those results to the client component, and renders a logout button underneath the list.【F:src/app/(protected)/todo-3/page.tsx†L1-L16】 Because the data fetch happens server-side, the first paint already shows the user’s todos—the list is not blank while waiting for a client fetch. Logging out simply calls `supabase.auth.signOut()` and pushes the user back to `/`, which clears the cookie and, thanks to the middleware, immediately blocks access to the protected routes.【F:src/components/logout-button.tsx†L1-L24】
+The `/todos` page itself is a server component. It awaits `getTodos()`, passes those results to the client component, and renders a logout button underneath the list.【F:src/app/(protected)/todos/page.tsx†L1-L16】 Because the data fetch happens server-side, the first paint already shows the user’s todos—the list is not blank while waiting for a client fetch. Logging out simply calls `supabase.auth.signOut()` and pushes the user back to `/`, which clears the cookie and, thanks to the middleware, immediately blocks access to the protected routes.【F:src/components/logout-button.tsx†L1-L24】
 
 ## 6. Client component structure and optimistic UI
 
-`TodoListClient` is the client component that controls interactivity. It seeds local state with the server-provided array so the UI is hydrated immediately, then keeps that state in sync with server actions. There are three handlers—add, delete, and complete—that all implement a small optimistic workflow: update local state first, call the server action, and roll back plus surface an alert if the request fails.【F:src/app/(protected)/todo-3/Todo-component.tsx†L10-L118】 The add flow also enforces the same minimum length constraint (`> 3` characters) as the database policy before it ever hits Supabase, which keeps the UI aligned with RLS validation.【F:src/app/(protected)/todo-3/Todo-component.tsx†L15-L26】【F:README.md†L79-L92】
+`TodoListClient` is the client component that controls interactivity. It seeds local state with the server-provided array so the UI is hydrated immediately, then keeps that state in sync with server actions. There are three handlers—add, delete, and complete—that all implement a small optimistic workflow: update local state first, call the server action, and roll back plus surface an alert if the request fails.【F:src/app/(protected)/todos/Todo-component.tsx†L10-L118】 The add flow also enforces the same minimum length constraint (`> 3` characters) as the database policy before it ever hits Supabase, which keeps the UI aligned with RLS validation.【F:src/app/(protected)/todos/Todo-component.tsx†L15-L26】【F:README.md†L79-L92】
 
-Rendering the list is straightforward: the component maps each todo into a row containing the Subframe checkbox, the task id for quick debugging, and a destructive secondary icon button wired to the delete action. Those variants (“destructive-secondary”, small size) match the design tokens defined by Subframe, so tweaking the visual style in the design tool flows directly into the generated React component.【F:src/app/(protected)/todo-3/Todo-component.tsx†L93-L115】【F:src/ui/components/IconButton.tsx†L15-L123】
+Rendering the list is straightforward: the component maps each todo into a row containing the Subframe checkbox, the task id for quick debugging, and a destructive secondary icon button wired to the delete action. Those variants (“destructive-secondary”, small size) match the design tokens defined by Subframe, so tweaking the visual style in the design tool flows directly into the generated React component.【F:src/app/(protected)/todos/Todo-component.tsx†L93-L115】【F:src/ui/components/IconButton.tsx†L15-L123】
 
 ## 7. Understanding multi-tenancy with RLS
 
@@ -64,9 +64,9 @@ The repo lives on GitHub and deploys through Vercel. The README outlines the “
 From login to logout, the request path looks like this:
 
 1. **Visit `/`** → middleware calls `updateSession`, sees no user, and allows the request because `/` is public.【F:src/middleware.ts†L9-L17】【F:src/utils/supabase/middleware.ts†L31-L48】
-2. **Submit credentials** → Supabase sets the session cookie and Next redirects to `/todo-3`.【F:src/components/login-form.tsx†L17-L34】
-3. **Middleware runs again** → now the cookie resolves to a user, so the request proceeds, `getTodos()` runs server-side, and the page hydrates with the user’s rows.【F:src/app/(protected)/todo-3/page.tsx†L1-L16】【F:src/app/(protected)/todo-3/actions.ts†L12-L29】
-4. **UI interactions** → client handlers optimistically update state while server actions enforce RLS-backed CRUD access.【F:src/app/(protected)/todo-3/Todo-component.tsx†L15-L115】【F:README.md†L62-L113】
+2. **Submit credentials** → Supabase sets the session cookie and Next redirects to `/todos`.【F:src/components/login-form.tsx†L17-L34】
+3. **Middleware runs again** → now the cookie resolves to a user, so the request proceeds, `getTodos()` runs server-side, and the page hydrates with the user’s rows.【F:src/app/(protected)/todos/page.tsx†L1-L16】【F:src/app/(protected)/todos/actions.ts†L12-L29】
+4. **UI interactions** → client handlers optimistically update state while server actions enforce RLS-backed CRUD access.【F:src/app/(protected)/todos/Todo-component.tsx†L15-L115】【F:README.md†L62-L113】
 5. **Log out** → `signOut()` clears the session cookie, redirecting the user back to `/` and once again locking down the protected route group.【F:src/components/logout-button.tsx†L10-L22】【F:src/app/(protected)/layout.tsx†L1-L19】
 
 Nothing here relies on hidden state or manual session management; everything flows through Supabase’s JWT cookie, Next.js middleware, and Subframe-generated components. If you follow the same steps—provision a Supabase project, enable the todo RLS policies, and wire the environment variables—you’ll end up with the same multi-tenant, design-system-driven CRUD experience demonstrated in the video.
