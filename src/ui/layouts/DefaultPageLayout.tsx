@@ -18,18 +18,20 @@ import { DropdownMenu } from "../components/DropdownMenu";
 import { IconButton } from "../components/IconButton";
 import { TopbarWithLeftNav } from "../components/TopbarWithLeftNav";
 import * as SubframeUtils from "../utils";
+import { createClient } from "@/utils/supabase/client";
 
 interface DefaultPageLayoutRootProps
   extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
   className?: string;
+  userNameSlot?: string;
 }
 
 const DefaultPageLayoutRoot = React.forwardRef<
   HTMLDivElement,
   DefaultPageLayoutRootProps
 >(function DefaultPageLayoutRoot(
-  { children, className, ...otherProps }: DefaultPageLayoutRootProps,
+  { children, className, userNameSlot, ...otherProps }: DefaultPageLayoutRootProps,
   ref
 ) {
   return (
@@ -47,6 +49,7 @@ const DefaultPageLayoutRoot = React.forwardRef<
             <img
               className="h-6 flex-none object-cover"
               src="https://res.cloudinary.com/subframe/image/upload/v1711417511/shared/t4qorgih4yjwudzjfkxq.png"
+              alt="Logo"
             />
             <div className="flex items-center gap-2">
               <TopbarWithLeftNav.NavItem selected={true}>
@@ -64,23 +67,24 @@ const DefaultPageLayoutRoot = React.forwardRef<
                   A
                 </Avatar>
               </SubframeCore.DropdownMenu.Trigger>
-              <SubframeCore.DropdownMenu.Portal>
-                <SubframeCore.DropdownMenu.Content
-                  side="bottom"
-                  align="end"
-                  sideOffset={4}
-                  asChild={true}
-                >
-                  <DropdownMenu>
-                    <DropdownMenu.DropdownItem icon={<FeatherSettings />}>
-                      Settings
-                    </DropdownMenu.DropdownItem>
-                    <DropdownMenu.DropdownItem icon={<FeatherLogOut />}>
+              <SubframeCore.DropdownMenu.Content
+                side="bottom"
+                align="end"
+                sideOffset={4}
+              >
+                <DropdownMenu>
+                  <DropdownMenu.DropdownItem icon={<FeatherSettings />}>
+                    Settings
+                  </DropdownMenu.DropdownItem>
+                  <DropdownMenu.DropdownItem icon={<FeatherLogOut />} onClick={async () => {
+                    const supabase = createClient()
+                    await supabase.auth.signOut()
+                    window.location.href = '/'
+                  }}>
                       Log out
-                    </DropdownMenu.DropdownItem>
-                  </DropdownMenu>
-                </SubframeCore.DropdownMenu.Content>
-              </SubframeCore.DropdownMenu.Portal>
+                  </DropdownMenu.DropdownItem>
+                </DropdownMenu>
+              </SubframeCore.DropdownMenu.Content>
             </SubframeCore.DropdownMenu.Root>
           </>
         }
