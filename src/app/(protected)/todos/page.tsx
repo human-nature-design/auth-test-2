@@ -1,5 +1,5 @@
 import { getTodos, addTodo, deleteTodo, completeTodo } from "./actions";
-import MyTodos from "@/ui/layouts/Todo";
+import MyTodos from "@/ui/layouts/Todo-page";
 
 export default async function TodoPage() {
   const todos = await getTodos();
