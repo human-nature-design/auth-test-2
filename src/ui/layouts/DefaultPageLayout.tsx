@@ -9,9 +9,7 @@
  */
 
 import React from "react";
-import { FeatherBell } from "@subframe/core";
-import { FeatherLogOut } from "@subframe/core";
-import { FeatherSettings } from "@subframe/core";
+import { FeatherBell, FeatherLogOut, FeatherSettings, FeatherUser } from "@subframe/core";
 import * as SubframeCore from "@subframe/core";
 import { Avatar } from "../components/Avatar";
 import { DropdownMenu } from "../components/DropdownMenu";
@@ -22,6 +20,7 @@ import * as SubframeUtils from "../utils";
 interface DefaultPageLayoutRootProps
   extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
+  userNameSlot?: React.ReactNode;
   className?: string;
 }
 
@@ -29,7 +28,7 @@ const DefaultPageLayoutRoot = React.forwardRef<
   HTMLDivElement,
   DefaultPageLayoutRootProps
 >(function DefaultPageLayoutRoot(
-  { children, className, ...otherProps }: DefaultPageLayoutRootProps,
+  { children, userNameSlot, className, ...otherProps }: DefaultPageLayoutRootProps,
   ref
 ) {
   return (
@@ -72,6 +71,18 @@ const DefaultPageLayoutRoot = React.forwardRef<
                   asChild={true}
                 >
                   <DropdownMenu>
+                    <DropdownMenu.DropdownItem icon={<FeatherUser />}>
+                      {/* 
+                        This demonstrates React's slot pattern using ReactNode:
+                        - userNameSlot is passed as a prop from parent components (like QueryPage)
+                        - It can be any valid React content: string, JSX, component, etc.
+                        - The || operator provides a fallback if userNameSlot is undefined/null
+                        - In QueryPage, user?.email is passed as userNameSlot prop
+                        - The interface DefaultPageLayoutRootProps defines userNameSlot?: React.ReactNode
+                        - This makes it optional and flexible - can accept any renderable content
+                      */}
+                      {userNameSlot || "user name"}
+                    </DropdownMenu.DropdownItem>
                     <DropdownMenu.DropdownItem icon={<FeatherSettings />}>
                       Settings
                     </DropdownMenu.DropdownItem>
