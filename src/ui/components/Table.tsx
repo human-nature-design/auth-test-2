@@ -1,7 +1,7 @@
 "use client";
 /*
  * Documentation:
- * Table — https://app.subframe.com/library?component=Table_142dfde7-d0cc-48a1-a04c-a08ab2252633
+ * Table — https://app.subframe.com/eba0e2f569a0/library?component=Table_142dfde7-d0cc-48a1-a04c-a08ab2252633
  */
 
 import React from "react";
@@ -78,7 +78,7 @@ const HeaderRow = React.forwardRef<HTMLTableRowElement, HeaderRowProps>(
 interface HeaderCellProps
   extends React.ThHTMLAttributes<HTMLTableHeaderCellElement> {
   children?: React.ReactNode;
-  icon?: SubframeCore.IconName;
+  icon?: React.ReactNode;
   className?: string;
 }
 
@@ -101,10 +101,11 @@ const HeaderCell = React.forwardRef<HTMLDivElement, HeaderCellProps>(
               {children}
             </span>
           ) : null}
-          <SubframeCore.Icon
-            className="text-caption font-caption text-subtext-color"
-            name={icon}
-          />
+          {icon ? (
+            <SubframeCore.IconWrapper className="text-caption font-caption text-subtext-color">
+              {icon}
+            </SubframeCore.IconWrapper>
+          ) : null}
         </div>
       </th>
     );
