@@ -67,35 +67,24 @@ const DefaultPageLayoutRoot = React.forwardRef<
                   A
                 </Avatar>
               </SubframeCore.DropdownMenu.Trigger>
-              <SubframeCore.DropdownMenu.Portal>
-                <SubframeCore.DropdownMenu.Content
-                  side="bottom"
-                  align="end"
-                  sideOffset={4}
-                  asChild={true}
-                >
-                  <DropdownMenu>
-                    {userNameSlot ? (
-                      <>
-                        <div className="px-3 py-2 text-body-sm font-body text-subtext-color">
-                          {userNameSlot}
-                        </div>
-                        <DropdownMenu.DropdownDivider />
-                      </>
-                    ) : null}
-                    <DropdownMenu.DropdownItem icon={<FeatherSettings />}>
-                      Settings
-                    </DropdownMenu.DropdownItem>
-                    <DropdownMenu.DropdownItem icon={<FeatherLogOut />} onClick={async () => {
-                      const supabase = createClient()
-                      await supabase.auth.signOut()
-                      window.location.href = '/'
-                    }}>
-                        Log out
-                    </DropdownMenu.DropdownItem>
-                  </DropdownMenu>
-                </SubframeCore.DropdownMenu.Content>
-              </SubframeCore.DropdownMenu.Portal>
+              <SubframeCore.DropdownMenu.Content
+                side="bottom"
+                align="end"
+                sideOffset={4}
+              >
+                <DropdownMenu>
+                  <DropdownMenu.DropdownItem icon={<FeatherSettings />}>
+                    Settings
+                  </DropdownMenu.DropdownItem>
+                  <DropdownMenu.DropdownItem icon={<FeatherLogOut />} onClick={async () => {
+                    const supabase = createClient()
+                    await supabase.auth.signOut()
+                    window.location.href = '/'
+                  }}>
+                      Log out
+                  </DropdownMenu.DropdownItem>
+                </DropdownMenu>
+              </SubframeCore.DropdownMenu.Content>
             </SubframeCore.DropdownMenu.Root>
           </>
         }
