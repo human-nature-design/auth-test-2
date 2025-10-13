@@ -25,6 +25,7 @@ export default function MyTodos({
   const [todos, setTodos] = useState<Todo[]>(initialTodos);
   const [newTask, setNewTask] = useState("");
 
+  
   async function onAdd() {
     if (newTask.trim().length <= 3) return;
 
@@ -38,6 +39,7 @@ export default function MyTodos({
     }
   }
 
+  
   async function onDelete(id: number) {
     const prev = todos;
     setTodos((t) => t.filter((x) => x.id !== id));
