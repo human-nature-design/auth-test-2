@@ -6,7 +6,6 @@ import { Checkbox } from "@/ui/components/Checkbox";
 import { IconButton } from "@/ui/components/IconButton";
 import { TextField } from "@/ui/components/TextField";
 import { FeatherX, FeatherPlusCircle } from "@subframe/core";
-import UserProfileSettings from "@/ui/components/user-profile-settings";
 import type { Todo } from "@/types";
 
 type MyTodosProps = {
