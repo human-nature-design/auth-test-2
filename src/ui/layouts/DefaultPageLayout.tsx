@@ -18,6 +18,7 @@ import { DropdownMenu } from "../components/DropdownMenu";
 import { IconButton } from "../components/IconButton";
 import { TopbarWithLeftNav } from "../components/TopbarWithLeftNav";
 import * as SubframeUtils from "../utils";
+import { createClient } from "@/utils/supabase/client";
 
 interface DefaultPageLayoutRootProps
   extends React.HTMLAttributes<HTMLDivElement> {
@@ -48,6 +49,7 @@ const DefaultPageLayoutRoot = React.forwardRef<
             <img
               className="h-6 flex-none object-cover"
               src="https://res.cloudinary.com/subframe/image/upload/v1711417511/shared/t4qorgih4yjwudzjfkxq.png"
+              alt="Logo"
             />
             <div className="flex items-center gap-2">
               <TopbarWithLeftNav.NavItem selected={true}>
@@ -73,11 +75,23 @@ const DefaultPageLayoutRoot = React.forwardRef<
                   asChild={true}
                 >
                   <DropdownMenu>
+                    {userNameSlot ? (
+                      <>
+                        <div className="px-3 py-2 text-body-sm font-body text-subtext-color">
+                          {userNameSlot}
+                        </div>
+                        <DropdownMenu.DropdownDivider />
+                      </>
+                    ) : null}
                     <DropdownMenu.DropdownItem icon={<FeatherSettings />}>
                       Settings
                     </DropdownMenu.DropdownItem>
-                    <DropdownMenu.DropdownItem icon={<FeatherLogOut />}>
-                      Log out
+                    <DropdownMenu.DropdownItem icon={<FeatherLogOut />} onClick={async () => {
+                      const supabase = createClient()
+                      await supabase.auth.signOut()
+                      window.location.href = '/'
+                    }}>
+                        Log out
                     </DropdownMenu.DropdownItem>
                   </DropdownMenu>
                 </SubframeCore.DropdownMenu.Content>
