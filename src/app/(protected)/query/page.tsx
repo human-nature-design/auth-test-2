@@ -8,7 +8,7 @@ import { DefaultPageLayout } from "@/ui/layouts/DefaultPageLayout";
 
 export default async function QueryPage() {
     const todos = await getTodos();
-    console.log(todos);
+    
 
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();

@@ -76,7 +76,7 @@ export default function MyTodos({
         <span className="text-heading-2 font-heading-2 text-default-font">
           My todos
         </span>
-        <UserProfileSettings />
+        
       </div>
       <div className="flex w-full items-center gap-2">
         <TextField
