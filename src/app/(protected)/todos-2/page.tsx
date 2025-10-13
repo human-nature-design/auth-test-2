@@ -10,6 +10,7 @@ export default async function TodoPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
+
   return (
     <DefaultPageLayout userNameSlot={user?.email}>
     <MyTodos

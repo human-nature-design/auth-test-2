@@ -23,13 +23,14 @@ interface DefaultPageLayoutRootProps
   extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
   className?: string;
+  userNameSlot?: string;
 }
 
 const DefaultPageLayoutRoot = React.forwardRef<
   HTMLDivElement,
   DefaultPageLayoutRootProps
 >(function DefaultPageLayoutRoot(
-  { children, className, ...otherProps }: DefaultPageLayoutRootProps,
+  { children, className, userNameSlot, ...otherProps }: DefaultPageLayoutRootProps,
   ref
 ) {
   return (
