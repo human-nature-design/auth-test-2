@@ -7,6 +7,7 @@ import { IconButton } from "@/ui/components/IconButton";
 import { TextField } from "@/ui/components/TextField";
 import { FeatherX, FeatherPlusCircle } from "@subframe/core";
 import type { Todo } from "@/types";
+import LogoutButton from "@/ui/components/logout-button";
 
 type MyTodosProps = {
   initialTodos?: Todo[];
@@ -75,7 +76,7 @@ export default function MyTodos({
         <span className="text-heading-2 font-heading-2 text-default-font">
           My todos
         </span>
-        
+        <LogoutButton />
       </div>
       <div className="flex w-full items-center gap-2">
         <TextField
