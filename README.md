@@ -1,4 +1,4 @@
-# Todo example using Supabase, Vercel, NextJS
+This is a boilerplate for getting started with RLS, Auth, Supabase DB, etc. 
 
 - Frontend:
   - [Next.js](https://github.com/vercel/next.js) - a React framework for production.
